@@ -8,13 +8,15 @@
 
 """Streaming images and labels from datasets created with dataset_tool.py."""
 
-import os
-import numpy as np
-import zipfile
-import PIL.Image
 import json
-import torch
+import os
+import zipfile
+
 import dnnlib
+import numpy as np
+import PIL.Image
+import torch
+
 
 try:
     import pyspng

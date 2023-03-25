@@ -7,14 +7,14 @@
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
 import os
-import numpy as np
-import torch
 import warnings
 
-from .. import custom_ops
-from .. import misc
-from . import upfirdn2d
-from . import bias_act
+import numpy as np
+import torch
+
+from .. import custom_ops, misc
+from . import bias_act, upfirdn2d
+
 
 # ----------------------------------------------------------------------------
 
@@ -26,7 +26,12 @@ def _init():
     if _plugin is None:
         _plugin = custom_ops.get_plugin(
             module_name="filtered_lrelu_plugin",
-            sources=["filtered_lrelu.cpp", "filtered_lrelu_wr.cu", "filtered_lrelu_rd.cu", "filtered_lrelu_ns.cu"],
+            sources=[
+                "filtered_lrelu.cpp",
+                "filtered_lrelu_wr.cu",
+                "filtered_lrelu_rd.cu",
+                "filtered_lrelu_ns.cu",
+            ],
             headers=["filtered_lrelu.h", "filtered_lrelu.cu"],
             source_dir=os.path.dirname(__file__),
             extra_cuda_cflags=["--use_fast_math", "--allow-unsupported-compiler"],
@@ -131,7 +136,13 @@ def filtered_lrelu(
     assert impl in ["ref", "cuda"]
     if impl == "cuda" and x.device.type == "cuda" and _init():
         return _filtered_lrelu_cuda(
-            up=up, down=down, padding=padding, gain=gain, slope=slope, clamp=clamp, flip_filter=flip_filter
+            up=up,
+            down=down,
+            padding=padding,
+            gain=gain,
+            slope=slope,
+            clamp=clamp,
+            flip_filter=flip_filter,
         ).apply(x, fu, fd, b, None, 0, 0)
     return _filtered_lrelu_ref(
         x,
@@ -153,7 +164,17 @@ def filtered_lrelu(
 
 @misc.profiled_function
 def _filtered_lrelu_ref(
-    x, fu=None, fd=None, b=None, up=1, down=1, padding=0, gain=np.sqrt(2), slope=0.2, clamp=None, flip_filter=False
+    x,
+    fu=None,
+    fd=None,
+    b=None,
+    up=1,
+    down=1,
+    padding=0,
+    gain=np.sqrt(2),
+    slope=0.2,
+    clamp=None,
+    flip_filter=False,
 ):
     """Slow and memory-inefficient reference implementation of `filtered_lrelu()` using
     existing `upfirdn2n()` and `bias_act()` ops.
@@ -180,7 +201,12 @@ def _filtered_lrelu_ref(
     # Compute using existing ops.
     x = bias_act.bias_act(x=x, b=b)  # Apply bias.
     x = upfirdn2d.upfirdn2d(
-        x=x, f=fu, up=up, padding=[px0, px1, py0, py1], gain=up**2, flip_filter=flip_filter
+        x=x,
+        f=fu,
+        up=up,
+        padding=[px0, px1, py0, py1],
+        gain=up**2,
+        flip_filter=flip_filter,
     )  # Upsample.
     x = bias_act.bias_act(x=x, act="lrelu", alpha=slope, gain=gain, clamp=clamp)  # Bias, leaky ReLU, clamp.
     x = upfirdn2d.upfirdn2d(x=x, f=fd, down=down, flip_filter=flip_filter)  # Downsample.
@@ -247,7 +273,10 @@ def _filtered_lrelu_cuda(up=1, down=1, padding=0, gain=np.sqrt(2), slope=0.2, cl
             # Warn if input storage strides are not in decreasing order due to e.g. channels-last layout.
             strides = [x.stride(i) for i in range(x.ndim) if x.size(i) > 1]
             if any(a < b for a, b in zip(strides[:-1], strides[1:])):
-                warnings.warn("low-performance memory layout detected in filtered_lrelu input", RuntimeWarning)
+                warnings.warn(
+                    "low-performance memory layout detected in filtered_lrelu input",
+                    RuntimeWarning,
+                )
 
             # Call C++/Cuda plugin if datatype is supported.
             if x.dtype in [torch.float16, torch.float32]:
@@ -289,7 +318,12 @@ def _filtered_lrelu_cuda(up=1, down=1, padding=0, gain=np.sqrt(2), slope=0.2, cl
 
                 y = x.add(b.unsqueeze(-1).unsqueeze(-1))  # Add bias.
                 y = upfirdn2d.upfirdn2d(
-                    x=y, f=fu, up=up, padding=[px0, px1, py0, py1], gain=up**2, flip_filter=flip_filter
+                    x=y,
+                    f=fu,
+                    up=up,
+                    padding=[px0, px1, py0, py1],
+                    gain=up**2,
+                    flip_filter=flip_filter,
                 )  # Upsample.
                 so = _plugin.filtered_lrelu_act_(
                     y, si, sx, sy, gain, slope, clamp, write_signs
@@ -334,7 +368,13 @@ def _filtered_lrelu_cuda(up=1, down=1, padding=0, gain=np.sqrt(2), slope=0.2, cl
                 sx = sx - (fu.shape[-1] - 1) + px0
                 sy = sy - (fu.shape[0] - 1) + py0
                 dx = _filtered_lrelu_cuda(
-                    up=down, down=up, padding=pp, gain=gg, slope=slope, clamp=None, flip_filter=ff
+                    up=down,
+                    down=up,
+                    padding=pp,
+                    gain=gg,
+                    slope=slope,
+                    clamp=None,
+                    flip_filter=ff,
                 ).apply(dy, fd, fu, None, si, sx, sy)
 
             if ctx.needs_input_grad[3]:

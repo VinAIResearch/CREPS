@@ -8,21 +8,19 @@
 
 """Calculate quality metrics for previous training run or pretrained network pickle."""
 
-import os
-import click
-import json
-import tempfile
 import copy
-import torch
+import json
+import os
+import tempfile
 
+import click
 import dnnlib
 import legacy
-from metrics import metric_main
-from metrics import metric_utils
-from torch_utils import training_stats
-from torch_utils import custom_ops
-from torch_utils import misc
+import torch
+from metrics import metric_main, metric_utils
+from torch_utils import custom_ops, misc, training_stats
 from torch_utils.ops import conv2d_gradfix
+
 
 # ----------------------------------------------------------------------------
 
@@ -36,12 +34,18 @@ def subprocess_fn(rank, args, temp_dir):
         if os.name == "nt":
             init_method = "file:///" + init_file.replace("\\", "/")
             torch.distributed.init_process_group(
-                backend="gloo", init_method=init_method, rank=rank, world_size=args.num_gpus
+                backend="gloo",
+                init_method=init_method,
+                rank=rank,
+                world_size=args.num_gpus,
             )
         else:
             init_method = f"file://{init_file}"
             torch.distributed.init_process_group(
-                backend="nccl", init_method=init_method, rank=rank, world_size=args.num_gpus
+                backend="nccl",
+                init_method=init_method,
+                rank=rank,
+                world_size=args.num_gpus,
             )
 
     # Init torch_utils.
@@ -103,7 +107,13 @@ def parse_comma_separated_list(s):
 
 @click.command()
 @click.pass_context
-@click.option("network_pkl", "--network", help="Network pickle filename or URL", metavar="PATH", required=True)
+@click.option(
+    "network_pkl",
+    "--network",
+    help="Network pickle filename or URL",
+    metavar="PATH",
+    required=True,
+)
 @click.option(
     "--metrics",
     help="Quality metrics",
@@ -112,11 +122,32 @@ def parse_comma_separated_list(s):
     default="fid50k_full",
     show_default=True,
 )
-@click.option("--data", help="Dataset to evaluate against  [default: look up]", metavar="[ZIP|DIR]")
-@click.option("--mirror", help="Enable dataset x-flips  [default: look up]", type=bool, metavar="BOOL")
-@click.option("--gpus", help="Number of GPUs to use", type=int, default=1, metavar="INT", show_default=True)
 @click.option(
-    "--verbose", help="Print optional information", type=bool, default=True, metavar="BOOL", show_default=True
+    "--data",
+    help="Dataset to evaluate against  [default: look up]",
+    metavar="[ZIP|DIR]",
+)
+@click.option(
+    "--mirror",
+    help="Enable dataset x-flips  [default: look up]",
+    type=bool,
+    metavar="BOOL",
+)
+@click.option(
+    "--gpus",
+    help="Number of GPUs to use",
+    type=int,
+    default=1,
+    metavar="INT",
+    show_default=True,
+)
+@click.option(
+    "--verbose",
+    help="Print optional information",
+    type=bool,
+    default=True,
+    metavar="BOOL",
+    show_default=True,
 )
 def calc_metrics(ctx, network_pkl, metrics, data, mirror, gpus, verbose):
     """Calculate quality metrics for previous training run or pretrained network pickle.

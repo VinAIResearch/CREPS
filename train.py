@@ -9,18 +9,18 @@
 """Train a GAN using the techniques described in the paper
 "Alias-Free Generative Adversarial Networks"."""
 
-import os
-import click
-import re
 import json
+import os
+import re
 import tempfile
-import torch
 
+import click
 import dnnlib
-from training import training_loop
+import torch
 from metrics import metric_main
-from torch_utils import training_stats
-from torch_utils import custom_ops
+from torch_utils import custom_ops, training_stats
+from training import training_loop
+
 
 # ----------------------------------------------------------------------------
 
@@ -34,12 +34,18 @@ def subprocess_fn(rank, c, temp_dir):
         if os.name == "nt":
             init_method = "file:///" + init_file.replace("\\", "/")
             torch.distributed.init_process_group(
-                backend="gloo", init_method=init_method, rank=rank, world_size=c.num_gpus
+                backend="gloo",
+                init_method=init_method,
+                rank=rank,
+                world_size=c.num_gpus,
             )
         else:
             init_method = f"file://{init_file}"
             torch.distributed.init_process_group(
-                backend="nccl", init_method=init_method, rank=rank, world_size=c.num_gpus
+                backend="nccl",
+                init_method=init_method,
+                rank=rank,
+                world_size=c.num_gpus,
             )
 
     # Init torch_utils.
@@ -111,7 +117,11 @@ def launch_training(c, desc, outdir, dry_run):
 def init_dataset_kwargs(data):
     try:
         dataset_kwargs = dnnlib.EasyDict(
-            class_name="training.dataset.ImageFolderDataset", path=data, use_labels=True, max_size=None, xflip=False
+            class_name="training.dataset.ImageFolderDataset",
+            path=data,
+            use_labels=True,
+            max_size=None,
+            xflip=False,
         )
         dataset_obj = dnnlib.util.construct_class_by_name(**dataset_kwargs)  # Subclass of training.dataset.Dataset.
         dataset_kwargs.resolution = dataset_obj.resolution  # Be explicit about resolution.
@@ -146,14 +156,50 @@ def parse_comma_separated_list(s):
     required=True,
 )
 @click.option("--data", help="Training data", metavar="[ZIP|DIR]", type=str, required=True)
-@click.option("--gpus", help="Number of GPUs to use", metavar="INT", type=click.IntRange(min=1), required=True)
-@click.option("--batch", help="Total batch size", metavar="INT", type=click.IntRange(min=1), required=True)
-@click.option("--gamma", help="R1 regularization weight", metavar="FLOAT", type=click.FloatRange(min=0), required=True)
-# Optional features.
-@click.option("--cond", help="Train conditional model", metavar="BOOL", type=bool, default=False, show_default=True)
-@click.option("--mirror", help="Enable dataset x-flips", metavar="BOOL", type=bool, default=False, show_default=True)
 @click.option(
-    "--aug", help="Augmentation mode", type=click.Choice(["noaug", "ada", "fixed"]), default="ada", show_default=True
+    "--gpus",
+    help="Number of GPUs to use",
+    metavar="INT",
+    type=click.IntRange(min=1),
+    required=True,
+)
+@click.option(
+    "--batch",
+    help="Total batch size",
+    metavar="INT",
+    type=click.IntRange(min=1),
+    required=True,
+)
+@click.option(
+    "--gamma",
+    help="R1 regularization weight",
+    metavar="FLOAT",
+    type=click.FloatRange(min=0),
+    required=True,
+)
+# Optional features.
+@click.option(
+    "--cond",
+    help="Train conditional model",
+    metavar="BOOL",
+    type=bool,
+    default=False,
+    show_default=True,
+)
+@click.option(
+    "--mirror",
+    help="Enable dataset x-flips",
+    metavar="BOOL",
+    type=bool,
+    default=False,
+    show_default=True,
+)
+@click.option(
+    "--aug",
+    help="Augmentation mode",
+    type=click.Choice(["noaug", "ada", "fixed"]),
+    default="ada",
+    show_default=True,
 )
 @click.option("--resume", help="Resume from given network pickle", metavar="[PATH|URL]", type=str)
 @click.option(
@@ -181,19 +227,47 @@ def parse_comma_separated_list(s):
     default=0.6,
     show_default=True,
 )
-@click.option("--batch-gpu", help="Limit batch size per GPU", metavar="INT", type=click.IntRange(min=1))
 @click.option(
-    "--cbase", help="Capacity multiplier", metavar="INT", type=click.IntRange(min=1), default=32768, show_default=True
+    "--batch-gpu",
+    help="Limit batch size per GPU",
+    metavar="INT",
+    type=click.IntRange(min=1),
 )
 @click.option(
-    "--cmax", help="Max. feature maps", metavar="INT", type=click.IntRange(min=1), default=512, show_default=True
+    "--cbase",
+    help="Capacity multiplier",
+    metavar="INT",
+    type=click.IntRange(min=1),
+    default=32768,
+    show_default=True,
 )
-@click.option("--glr", help="G learning rate  [default: varies]", metavar="FLOAT", type=click.FloatRange(min=0))
 @click.option(
-    "--dlr", help="D learning rate", metavar="FLOAT", type=click.FloatRange(min=0), default=0.002, show_default=True
+    "--cmax",
+    help="Max. feature maps",
+    metavar="INT",
+    type=click.IntRange(min=1),
+    default=512,
+    show_default=True,
 )
 @click.option(
-    "--map-depth", help="Mapping network depth  [default: varies]", metavar="INT", type=click.IntRange(min=1)
+    "--glr",
+    help="G learning rate  [default: varies]",
+    metavar="FLOAT",
+    type=click.FloatRange(min=0),
+)
+@click.option(
+    "--dlr",
+    help="D learning rate",
+    metavar="FLOAT",
+    type=click.FloatRange(min=0),
+    default=0.002,
+    show_default=True,
+)
+@click.option(
+    "--map-depth",
+    help="Mapping network depth  [default: varies]",
+    metavar="INT",
+    type=click.IntRange(min=1),
 )
 @click.option(
     "--mbstd-group",
@@ -237,10 +311,29 @@ def parse_comma_separated_list(s):
     default=50,
     show_default=True,
 )
-@click.option("--seed", help="Random seed", metavar="INT", type=click.IntRange(min=0), default=0, show_default=True)
-@click.option("--fp32", help="Disable mixed-precision", metavar="BOOL", type=bool, default=False, show_default=True)
 @click.option(
-    "--nobench", help="Disable cuDNN benchmarking", metavar="BOOL", type=bool, default=False, show_default=True
+    "--seed",
+    help="Random seed",
+    metavar="INT",
+    type=click.IntRange(min=0),
+    default=0,
+    show_default=True,
+)
+@click.option(
+    "--fp32",
+    help="Disable mixed-precision",
+    metavar="BOOL",
+    type=bool,
+    default=False,
+    show_default=True,
+)
+@click.option(
+    "--nobench",
+    help="Disable cuDNN benchmarking",
+    metavar="BOOL",
+    type=bool,
+    default=False,
+    show_default=True,
 )
 @click.option(
     "--workers",

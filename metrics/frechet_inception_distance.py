@@ -13,7 +13,9 @@ https://github.com/bioinf-jku/TTUR/blob/master/fid.py"""
 
 import numpy as np
 import scipy.linalg
+
 from . import metric_utils
+
 
 # ----------------------------------------------------------------------------
 

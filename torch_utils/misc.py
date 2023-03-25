@@ -6,12 +6,14 @@
 # distribution of this software and related documentation without an express
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
-import re
 import contextlib
+import re
+import warnings
+
+import dnnlib
 import numpy as np
 import torch
-import warnings
-import dnnlib
+
 
 # ----------------------------------------------------------------------------
 # Cached construction of constant tensors. Avoids CPU=>GPU copy when the
@@ -31,7 +33,15 @@ def constant(value, shape=None, dtype=None, device=None, memory_format=None):
     if memory_format is None:
         memory_format = torch.contiguous_format
 
-    key = (value.shape, value.dtype, value.tobytes(), shape, dtype, device, memory_format)
+    key = (
+        value.shape,
+        value.dtype,
+        value.tobytes(),
+        shape,
+        dtype,
+        device,
+        memory_format,
+    )
     tensor = _constant_cache.get(key, None)
     if tensor is None:
         tensor = torch.as_tensor(value.copy(), dtype=dtype, device=device)
@@ -94,7 +104,10 @@ def assert_shape(tensor, ref_shape):
             pass
         elif isinstance(ref_size, torch.Tensor):
             with suppress_tracer_warnings():  # as_tensor results are registered as constants
-                symbolic_assert(torch.equal(torch.as_tensor(size), ref_size), f"Wrong size for dimension {idx}")
+                symbolic_assert(
+                    torch.equal(torch.as_tensor(size), ref_size),
+                    f"Wrong size for dimension {idx}",
+                )
         elif isinstance(size, torch.Tensor):
             with suppress_tracer_warnings():  # as_tensor results are registered as constants
                 symbolic_assert(

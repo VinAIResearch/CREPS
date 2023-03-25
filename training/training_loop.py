@@ -8,23 +8,22 @@
 
 """Main training loop."""
 
-import os
-import time
 import copy
 import json
+import os
 import pickle
-import psutil
-import PIL.Image
-import numpy as np
-import torch
-import dnnlib
-from torch_utils import misc
-from torch_utils import training_stats
-from torch_utils.ops import conv2d_gradfix
-from torch_utils.ops import grid_sample_gradfix
+import time
 
+import dnnlib
 import legacy
+import numpy as np
+import PIL.Image
+import psutil
+import torch
 from metrics import metric_main
+from torch_utils import misc, training_stats
+from torch_utils.ops import conv2d_gradfix, grid_sample_gradfix
+
 
 # ----------------------------------------------------------------------------
 
@@ -146,7 +145,10 @@ def training_loop(
     )
     training_set_iterator = iter(
         torch.utils.data.DataLoader(
-            dataset=training_set, sampler=training_set_sampler, batch_size=batch_size // num_gpus, **data_loader_kwargs
+            dataset=training_set,
+            sampler=training_set_sampler,
+            batch_size=batch_size // num_gpus,
+            **data_loader_kwargs,
         )
     )
     if rank == 0:
@@ -160,7 +162,9 @@ def training_loop(
     if rank == 0:
         print("Constructing networks...")
     common_kwargs = dict(
-        c_dim=training_set.label_dim, img_resolution=training_set.resolution, img_channels=training_set.num_channels
+        c_dim=training_set.label_dim,
+        img_resolution=training_set.resolution,
+        img_channels=training_set.num_channels,
     )
     G = (
         dnnlib.util.construct_class_by_name(**G_kwargs, **common_kwargs).train().requires_grad_(False).to(device)
@@ -246,11 +250,21 @@ def training_loop(
     if rank == 0:
         print("Exporting sample images...")
         grid_size, images, labels = setup_snapshot_image_grid(training_set=training_set)
-        save_image_grid(images, os.path.join(run_dir, "reals.png"), drange=[0, 255], grid_size=grid_size)
+        save_image_grid(
+            images,
+            os.path.join(run_dir, "reals.png"),
+            drange=[0, 255],
+            grid_size=grid_size,
+        )
         grid_z = torch.randn([labels.shape[0], G.z_dim], device=device).split(batch_gpu)
         grid_c = torch.from_numpy(labels).to(device).split(batch_gpu)
         images = torch.cat([G_ema(z=z, c=c, noise_mode="const").cpu() for z, c in zip(grid_z, grid_c)]).numpy()
-        save_image_grid(images, os.path.join(run_dir, "fakes_init.png"), drange=[-1, 1], grid_size=grid_size)
+        save_image_grid(
+            images,
+            os.path.join(run_dir, "fakes_init.png"),
+            drange=[-1, 1],
+            grid_size=grid_size,
+        )
 
     # Initialize logs.
     if rank == 0:
@@ -404,7 +418,10 @@ def training_loop(
         if (rank == 0) and (image_snapshot_ticks is not None) and (done or cur_tick % image_snapshot_ticks == 0):
             images = torch.cat([G_ema(z=z, c=c, noise_mode="const").cpu() for z, c in zip(grid_z, grid_c)]).numpy()
             save_image_grid(
-                images, os.path.join(run_dir, f"fakes{cur_nimg//1000:06d}.png"), drange=[-1, 1], grid_size=grid_size
+                images,
+                os.path.join(run_dir, f"fakes{cur_nimg//1000:06d}.png"),
+                drange=[-1, 1],
+                grid_size=grid_size,
             )
 
         # Save network snapshot.
@@ -412,7 +429,11 @@ def training_loop(
         snapshot_data = None
         if (network_snapshot_ticks is not None) and (done or cur_tick % network_snapshot_ticks == 0):
             snapshot_data = dict(
-                G=G, D=D, G_ema=G_ema, augment_pipe=augment_pipe, training_set_kwargs=dict(training_set_kwargs)
+                G=G,
+                D=D,
+                G_ema=G_ema,
+                augment_pipe=augment_pipe,
+                training_set_kwargs=dict(training_set_kwargs),
             )
             for key, value in snapshot_data.items():
                 if isinstance(value, torch.nn.Module):

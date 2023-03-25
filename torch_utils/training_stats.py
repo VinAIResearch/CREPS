@@ -12,11 +12,13 @@ synchronization overhead as well as the amount of boilerplate in user
 code."""
 
 import re
+
+import dnnlib
 import numpy as np
 import torch
-import dnnlib
 
 from . import misc
+
 
 # ----------------------------------------------------------------------------
 

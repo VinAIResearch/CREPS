@@ -12,7 +12,9 @@ by Kynkaanniemi et al. at
 https://github.com/kynkaat/improved-precision-and-recall-metric/blob/master/precision_recall.py"""
 
 import torch
+
 from . import metric_utils
+
 
 # ----------------------------------------------------------------------------
 

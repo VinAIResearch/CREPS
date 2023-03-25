@@ -10,8 +10,10 @@
 arbitrarily high order gradients with zero performance penalty."""
 
 import contextlib
+
 import torch
 from pkg_resources import parse_version
+
 
 # pylint: disable=redefined-builtin
 # pylint: disable=arguments-differ
@@ -49,11 +51,26 @@ def conv2d(input, weight, bias=None, stride=1, padding=0, dilation=1, groups=1):
             groups=groups,
         ).apply(input, weight, bias)
     return torch.nn.functional.conv2d(
-        input=input, weight=weight, bias=bias, stride=stride, padding=padding, dilation=dilation, groups=groups
+        input=input,
+        weight=weight,
+        bias=bias,
+        stride=stride,
+        padding=padding,
+        dilation=dilation,
+        groups=groups,
     )
 
 
-def conv_transpose2d(input, weight, bias=None, stride=1, padding=0, output_padding=0, groups=1, dilation=1):
+def conv_transpose2d(
+    input,
+    weight,
+    bias=None,
+    stride=1,
+    padding=0,
+    output_padding=0,
+    groups=1,
+    dilation=1,
+):
     if _should_use_custom_op(input):
         return _conv2d_gradfix(
             transpose=True,

@@ -26,6 +26,7 @@ import numpy as np
 import PIL.Image
 from tqdm import tqdm
 
+
 # ----------------------------------------------------------------------------
 
 
@@ -312,7 +313,9 @@ def open_dataset(source, *, max_images: Optional[int]):
 # ----------------------------------------------------------------------------
 
 
-def open_dest(dest: str) -> Tuple[str, Callable[[str, Union[bytes, str]], None], Callable[[], None]]:
+def open_dest(
+    dest: str,
+) -> Tuple[str, Callable[[str, Union[bytes, str]], None], Callable[[], None]]:
     dest_ext = file_ext(dest)
 
     if dest_ext == "zip":
@@ -351,11 +354,30 @@ def open_dest(dest: str) -> Tuple[str, Callable[[str, Union[bytes, str]], None],
 
 @click.command()
 @click.pass_context
-@click.option("--source", help="Directory or archive name for input dataset", required=True, metavar="PATH")
-@click.option("--dest", help="Output directory or archive name for output dataset", required=True, metavar="PATH")
+@click.option(
+    "--source",
+    help="Directory or archive name for input dataset",
+    required=True,
+    metavar="PATH",
+)
+@click.option(
+    "--dest",
+    help="Output directory or archive name for output dataset",
+    required=True,
+    metavar="PATH",
+)
 @click.option("--max-images", help="Output only up to `max-images` images", type=int, default=None)
-@click.option("--transform", help="Input crop/resize mode", type=click.Choice(["center-crop", "center-crop-wide"]))
-@click.option("--resolution", help="Output resolution (e.g., '512x512')", metavar="WxH", type=parse_tuple)
+@click.option(
+    "--transform",
+    help="Input crop/resize mode",
+    type=click.Choice(["center-crop", "center-crop-wide"]),
+)
+@click.option(
+    "--resolution",
+    help="Output resolution (e.g., '512x512')",
+    metavar="WxH",
+    type=parse_tuple,
+)
 def convert_dataset(
     ctx: click.Context,
     source: str,
@@ -452,7 +474,11 @@ def convert_dataset(
         # Error check to require uniform image attributes across
         # the whole dataset.
         channels = img.shape[2] if img.ndim == 3 else 1
-        cur_image_attrs = {"width": img.shape[1], "height": img.shape[0], "channels": channels}
+        cur_image_attrs = {
+            "width": img.shape[1],
+            "height": img.shape[0],
+            "channels": channels,
+        }
         if dataset_attrs is None:
             dataset_attrs = cur_image_attrs
             width = dataset_attrs["width"]

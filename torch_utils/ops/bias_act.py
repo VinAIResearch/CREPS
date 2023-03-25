@@ -9,17 +9,25 @@
 """Custom PyTorch ops for efficient bias and activation."""
 
 import os
+
+import dnnlib
 import numpy as np
 import torch
-import dnnlib
 
-from .. import custom_ops
-from .. import misc
+from .. import custom_ops, misc
+
 
 # ----------------------------------------------------------------------------
 
 activation_funcs = {
-    "linear": dnnlib.EasyDict(func=lambda x, **_: x, def_alpha=0, def_gain=1, cuda_idx=1, ref="", has_2nd_grad=False),
+    "linear": dnnlib.EasyDict(
+        func=lambda x, **_: x,
+        def_alpha=0,
+        def_gain=1,
+        cuda_idx=1,
+        ref="",
+        has_2nd_grad=False,
+    ),
     "relu": dnnlib.EasyDict(
         func=lambda x, **_: torch.nn.functional.relu(x),
         def_alpha=0,
@@ -37,13 +45,28 @@ activation_funcs = {
         has_2nd_grad=False,
     ),
     "tanh": dnnlib.EasyDict(
-        func=lambda x, **_: torch.tanh(x), def_alpha=0, def_gain=1, cuda_idx=4, ref="y", has_2nd_grad=True
+        func=lambda x, **_: torch.tanh(x),
+        def_alpha=0,
+        def_gain=1,
+        cuda_idx=4,
+        ref="y",
+        has_2nd_grad=True,
     ),
     "sigmoid": dnnlib.EasyDict(
-        func=lambda x, **_: torch.sigmoid(x), def_alpha=0, def_gain=1, cuda_idx=5, ref="y", has_2nd_grad=True
+        func=lambda x, **_: torch.sigmoid(x),
+        def_alpha=0,
+        def_gain=1,
+        cuda_idx=5,
+        ref="y",
+        has_2nd_grad=True,
     ),
     "elu": dnnlib.EasyDict(
-        func=lambda x, **_: torch.nn.functional.elu(x), def_alpha=0, def_gain=1, cuda_idx=6, ref="y", has_2nd_grad=True
+        func=lambda x, **_: torch.nn.functional.elu(x),
+        def_alpha=0,
+        def_gain=1,
+        cuda_idx=6,
+        ref="y",
+        has_2nd_grad=True,
     ),
     "selu": dnnlib.EasyDict(
         func=lambda x, **_: torch.nn.functional.selu(x),
@@ -194,7 +217,17 @@ def _bias_act_cuda(dim=1, act="linear", alpha=None, gain=None, clamp=None):
             y = x
             if act != "linear" or gain != 1 or clamp >= 0 or b is not _null_tensor:
                 y = _plugin.bias_act(
-                    x, b, _null_tensor, _null_tensor, _null_tensor, 0, dim, spec.cuda_idx, alpha, gain, clamp
+                    x,
+                    b,
+                    _null_tensor,
+                    _null_tensor,
+                    _null_tensor,
+                    0,
+                    dim,
+                    spec.cuda_idx,
+                    alpha,
+                    gain,
+                    clamp,
                 )
             ctx.save_for_backward(
                 x if "x" in spec.ref or spec.has_2nd_grad else _null_tensor,

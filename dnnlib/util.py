@@ -10,27 +10,27 @@
 
 import ctypes
 import fnmatch
+import glob
+import hashlib
+import html
 import importlib
 import inspect
-import numpy as np
-import os
-import shutil
-import sys
-import types
 import io
+import os
 import pickle
 import re
-import requests
-import html
-import hashlib
-import glob
+import shutil
+import sys
 import tempfile
+import types
 import urllib
 import urllib.request
 import uuid
-
 from distutils.util import strtobool
 from typing import Any, List, Tuple, Union
+
+import numpy as np
+import requests
 
 
 # Util classes
@@ -477,7 +477,10 @@ def open_url(
                         if "Google Drive - Quota exceeded" in content_str:
                             raise IOError("Google Drive download quota exceeded -- please try again later")
 
-                    match = re.search(r'filename="([^"]*)"', res.headers.get("Content-Disposition", ""))
+                    match = re.search(
+                        r'filename="([^"]*)"',
+                        res.headers.get("Content-Disposition", ""),
+                    )
                     url_name = match[1] if match else url
                     url_data = res.content
                     if verbose:

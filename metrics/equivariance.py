@@ -10,11 +10,14 @@
 "Alias-Free Generative Adversarial Networks"."""
 
 import copy
+
 import numpy as np
 import torch
 import torch.fft
 from torch_utils.ops import upfirdn2d
+
 from . import metric_utils
+
 
 # ----------------------------------------------------------------------------
 # Utilities.
@@ -89,7 +92,12 @@ def apply_fractional_translation(x, tx, ty, a=3):
         y = x
         y = upfirdn2d.filter2d(y, filter_x / filter_x.sum(), padding=[b, a, 0, 0])
         y = upfirdn2d.filter2d(y, filter_y / filter_y.sum(), padding=[0, 0, b, a])
-        y = y[:, :, max(b - iy, 0) : H + b + a + min(-iy - a, 0), max(b - ix, 0) : W + b + a + min(-ix - a, 0)]
+        y = y[
+            :,
+            :,
+            max(b - iy, 0) : H + b + a + min(-iy - a, 0),
+            max(b - ix, 0) : W + b + a + min(-ix - a, 0),
+        ]
         z[:, :, zy0:zy1, zx0:zx1] = y
 
     m = torch.zeros_like(x)

@@ -8,9 +8,9 @@
 
 import numpy as np
 import torch
-from torch_utils import misc
-from torch_utils import persistence
+from torch_utils import misc, persistence
 from torch_utils.ops import bias_act
+
 
 # ----------------------------------------------------------------------------
 
@@ -135,7 +135,12 @@ class MappingNetwork(torch.nn.Module):
         for idx in range(num_layers):
             in_features = features_list[idx]
             out_features = features_list[idx + 1]
-            layer = FullyConnectedLayer(in_features, out_features, activation=activation, lr_multiplier=lr_multiplier)
+            layer = FullyConnectedLayer(
+                in_features,
+                out_features,
+                activation=activation,
+                lr_multiplier=lr_multiplier,
+            )
             setattr(self, f"fc{idx}", layer)
 
         if num_ws is not None and w_avg_beta is not None:
@@ -216,7 +221,13 @@ class SynthesisLayer(torch.nn.Module):
 
         act_gain = self.act_gain * gain
         act_clamp = self.fc_clamp * gain if self.fc_clamp is not None else None
-        x = bias_act.bias_act(x, self.bias.to(x.dtype), act=self.activation, gain=act_gain, clamp=act_clamp)
+        x = bias_act.bias_act(
+            x,
+            self.bias.to(x.dtype),
+            act=self.activation,
+            gain=act_gain,
+            clamp=act_clamp,
+        )
         return x
 
     def extra_repr(self):
@@ -373,13 +384,20 @@ class SynthesisBlock(torch.nn.Module):
 
         if is_last or architecture == "skip":
             self.tores = ToResLayer(
-                out_channels, self.res_channels, w_dim=w_dim, fc_clamp=fc_clamp, channels_last=self.channels_last
+                out_channels,
+                self.res_channels,
+                w_dim=w_dim,
+                fc_clamp=fc_clamp,
+                channels_last=self.channels_last,
             )
             self.num_tores += 1
 
     def forward(self, x, res, ws, force_fp32=False, update_emas=False, **layer_kwargs):
         _ = update_emas  # unused
-        misc.assert_shape(ws, [None, (self.in_channels == 1) + self.num_fc + self.num_tores, self.w_dim])
+        misc.assert_shape(
+            ws,
+            [None, (self.in_channels == 1) + self.num_fc + self.num_tores, self.w_dim],
+        )
         w_iter = iter(ws.unbind(dim=1))
         dtype = torch.float16 if self.use_fp16 and not force_fp32 else torch.float32
         memory_format = torch.channels_last if self.channels_last and not force_fp32 else torch.contiguous_format
@@ -567,14 +585,29 @@ class Generator(torch.nn.Module):
         self.img_resolution = img_resolution
         self.img_channels = img_channels
         self.synthesis = SynthesisNetwork(
-            w_dim=w_dim, img_resolution=img_resolution, img_channels=img_channels, **synthesis_kwargs
+            w_dim=w_dim,
+            img_resolution=img_resolution,
+            img_channels=img_channels,
+            **synthesis_kwargs,
         )
         self.num_ws = self.synthesis.num_ws
         self.mapping = MappingNetwork(z_dim=z_dim, c_dim=c_dim, w_dim=w_dim, num_ws=self.num_ws, **mapping_kwargs)
 
-    def forward(self, z, c, truncation_psi=1, truncation_cutoff=None, update_emas=False, **synthesis_kwargs):
+    def forward(
+        self,
+        z,
+        c,
+        truncation_psi=1,
+        truncation_cutoff=None,
+        update_emas=False,
+        **synthesis_kwargs,
+    ):
         ws = self.mapping(
-            z, c, truncation_psi=truncation_psi, truncation_cutoff=truncation_cutoff, update_emas=update_emas
+            z,
+            c,
+            truncation_psi=truncation_psi,
+            truncation_cutoff=truncation_cutoff,
+            update_emas=update_emas,
         )
         img = self.synthesis(ws, update_emas=update_emas, **synthesis_kwargs)
         return img

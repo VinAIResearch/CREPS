@@ -10,14 +10,12 @@
 "Alias-Free Generative Adversarial Networks"."""
 
 import numpy as np
-import scipy.signal
 import scipy.optimize
+import scipy.signal
 import torch
-from torch_utils import misc
-from torch_utils import persistence
-from torch_utils.ops import conv2d_gradfix
-from torch_utils.ops import filtered_lrelu
-from torch_utils.ops import bias_act
+from torch_utils import misc, persistence
+from torch_utils.ops import bias_act, conv2d_gradfix, filtered_lrelu
+
 
 # ----------------------------------------------------------------------------
 
@@ -135,7 +133,12 @@ class MappingNetwork(torch.nn.Module):
         self.embed = FullyConnectedLayer(self.c_dim, self.w_dim) if self.c_dim > 0 else None
         features = [self.z_dim + (self.w_dim if self.c_dim > 0 else 0)] + [self.w_dim] * self.num_layers
         for idx, in_features, out_features in zip(range(num_layers), features[:-1], features[1:]):
-            layer = FullyConnectedLayer(in_features, out_features, activation="lrelu", lr_multiplier=lr_multiplier)
+            layer = FullyConnectedLayer(
+                in_features,
+                out_features,
+                activation="lrelu",
+                lr_multiplier=lr_multiplier,
+            )
             setattr(self, f"fc{idx}", layer)
         self.register_buffer("w_avg", torch.zeros([w_dim]))
 
@@ -324,7 +327,14 @@ class SynthesisLayer(torch.nn.Module):
         # Setup parameters and buffers.
         self.affine = FullyConnectedLayer(self.w_dim, self.in_channels, bias_init=1)
         self.weight = torch.nn.Parameter(
-            torch.randn([self.out_channels, self.in_channels, self.conv_kernel, self.conv_kernel])
+            torch.randn(
+                [
+                    self.out_channels,
+                    self.in_channels,
+                    self.conv_kernel,
+                    self.conv_kernel,
+                ]
+            )
         )
         self.bias = torch.nn.Parameter(torch.zeros([self.out_channels]))
         self.register_buffer("magnitude_ema", torch.ones([]))
@@ -336,7 +346,10 @@ class SynthesisLayer(torch.nn.Module):
         self.register_buffer(
             "up_filter",
             self.design_lowpass_filter(
-                numtaps=self.up_taps, cutoff=self.in_cutoff, width=self.in_half_width * 2, fs=self.tmp_sampling_rate
+                numtaps=self.up_taps,
+                cutoff=self.in_cutoff,
+                width=self.in_half_width * 2,
+                fs=self.tmp_sampling_rate,
             ),
         )
 
@@ -585,14 +598,29 @@ class Generator(torch.nn.Module):
         self.img_resolution = img_resolution
         self.img_channels = img_channels
         self.synthesis = SynthesisNetwork(
-            w_dim=w_dim, img_resolution=img_resolution, img_channels=img_channels, **synthesis_kwargs
+            w_dim=w_dim,
+            img_resolution=img_resolution,
+            img_channels=img_channels,
+            **synthesis_kwargs,
         )
         self.num_ws = self.synthesis.num_ws
         self.mapping = MappingNetwork(z_dim=z_dim, c_dim=c_dim, w_dim=w_dim, num_ws=self.num_ws, **mapping_kwargs)
 
-    def forward(self, z, c, truncation_psi=1, truncation_cutoff=None, update_emas=False, **synthesis_kwargs):
+    def forward(
+        self,
+        z,
+        c,
+        truncation_psi=1,
+        truncation_cutoff=None,
+        update_emas=False,
+        **synthesis_kwargs,
+    ):
         ws = self.mapping(
-            z, c, truncation_psi=truncation_psi, truncation_cutoff=truncation_cutoff, update_emas=update_emas
+            z,
+            c,
+            truncation_psi=truncation_psi,
+            truncation_cutoff=truncation_cutoff,
+            update_emas=update_emas,
         )
         img = self.synthesis(ws, update_emas=update_emas, **synthesis_kwargs)
         return img

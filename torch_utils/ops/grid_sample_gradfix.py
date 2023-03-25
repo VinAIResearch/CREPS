@@ -14,6 +14,7 @@ Only works on 2D images and assumes
 import torch
 from pkg_resources import parse_version
 
+
 # pylint: disable=redefined-builtin
 # pylint: disable=arguments-differ
 # pylint: disable=protected-access
@@ -30,7 +31,11 @@ def grid_sample(input, grid):
     if _should_use_custom_op():
         return _GridSample2dForward.apply(input, grid)
     return torch.nn.functional.grid_sample(
-        input=input, grid=grid, mode="bilinear", padding_mode="zeros", align_corners=False
+        input=input,
+        grid=grid,
+        mode="bilinear",
+        padding_mode="zeros",
+        align_corners=False,
     )
 
 
@@ -50,7 +55,11 @@ class _GridSample2dForward(torch.autograd.Function):
         assert input.ndim == 4
         assert grid.ndim == 4
         output = torch.nn.functional.grid_sample(
-            input=input, grid=grid, mode="bilinear", padding_mode="zeros", align_corners=False
+            input=input,
+            grid=grid,
+            mode="bilinear",
+            padding_mode="zeros",
+            align_corners=False,
         )
         ctx.save_for_backward(input, grid)
         return output

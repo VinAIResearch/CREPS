@@ -8,22 +8,32 @@
 
 """Miscellaneous utilities used internally by the quality metrics."""
 
-import os
-import time
-import hashlib
-import pickle
 import copy
+import hashlib
+import os
+import pickle
+import time
 import uuid
+
+import dnnlib
 import numpy as np
 import torch
-import dnnlib
+
 
 # ----------------------------------------------------------------------------
 
 
 class MetricOptions:
     def __init__(
-        self, G=None, G_kwargs={}, dataset_kwargs={}, num_gpus=1, rank=0, device=None, progress=None, cache=True
+        self,
+        G=None,
+        G_kwargs={},
+        dataset_kwargs={},
+        num_gpus=1,
+        rank=0,
+        device=None,
+        progress=None,
+        cache=True,
     ):
         assert 0 <= rank < num_gpus
         self.G = G
@@ -203,7 +213,10 @@ class ProgressMonitor:
         self.batch_items = cur_items
 
         if (self.progress_fn is not None) and (self.num_items is not None):
-            self.progress_fn(self.pfn_lo + (self.pfn_hi - self.pfn_lo) * (cur_items / self.num_items), self.pfn_total)
+            self.progress_fn(
+                self.pfn_lo + (self.pfn_hi - self.pfn_lo) * (cur_items / self.num_items),
+                self.pfn_total,
+            )
 
     def sub(self, tag=None, num_items=None, flush_interval=1000, rel_lo=0, rel_hi=1):
         return ProgressMonitor(
@@ -268,13 +281,20 @@ def compute_feature_stats_for_dataset(
     stats = FeatureStats(max_items=num_items, **stats_kwargs)
     progress = opts.progress.sub(tag="dataset features", num_items=num_items, rel_lo=rel_lo, rel_hi=rel_hi)
     detector = get_feature_detector(
-        url=detector_url, device=opts.device, num_gpus=opts.num_gpus, rank=opts.rank, verbose=progress.verbose
+        url=detector_url,
+        device=opts.device,
+        num_gpus=opts.num_gpus,
+        rank=opts.rank,
+        verbose=progress.verbose,
     )
 
     # Main loop.
     item_subset = [(i * opts.num_gpus + opts.rank) % num_items for i in range((num_items - 1) // opts.num_gpus + 1)]
     for images, _labels in torch.utils.data.DataLoader(
-        dataset=dataset, sampler=item_subset, batch_size=batch_size, **data_loader_kwargs
+        dataset=dataset,
+        sampler=item_subset,
+        batch_size=batch_size,
+        **data_loader_kwargs,
     ):
         if images.shape[1] == 1:
             images = images.repeat([1, 3, 1, 1])
@@ -295,7 +315,14 @@ def compute_feature_stats_for_dataset(
 
 
 def compute_feature_stats_for_generator(
-    opts, detector_url, detector_kwargs, rel_lo=0, rel_hi=1, batch_size=64, batch_gen=None, **stats_kwargs
+    opts,
+    detector_url,
+    detector_kwargs,
+    rel_lo=0,
+    rel_hi=1,
+    batch_size=64,
+    batch_gen=None,
+    **stats_kwargs,
 ):
     if batch_gen is None:
         batch_gen = min(batch_size, 4)
@@ -308,9 +335,18 @@ def compute_feature_stats_for_generator(
     # Initialize.
     stats = FeatureStats(**stats_kwargs)
     assert stats.max_items is not None
-    progress = opts.progress.sub(tag="generator features", num_items=stats.max_items, rel_lo=rel_lo, rel_hi=rel_hi)
+    progress = opts.progress.sub(
+        tag="generator features",
+        num_items=stats.max_items,
+        rel_lo=rel_lo,
+        rel_hi=rel_hi,
+    )
     detector = get_feature_detector(
-        url=detector_url, device=opts.device, num_gpus=opts.num_gpus, rank=opts.rank, verbose=progress.verbose
+        url=detector_url,
+        device=opts.device,
+        num_gpus=opts.num_gpus,
+        rank=opts.rank,
+        verbose=progress.verbose,
     )
 
     # Main loop.

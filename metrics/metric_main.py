@@ -8,19 +8,23 @@
 
 """Main API for computing and reporting quality metrics."""
 
+import json
 import os
 import time
-import json
-import torch
-import dnnlib
 
-from . import metric_utils
-from . import frechet_inception_distance
-from . import kernel_inception_distance
-from . import precision_recall
-from . import perceptual_path_length
-from . import inception_score
-from . import equivariance
+import dnnlib
+import torch
+
+from . import (
+    equivariance,
+    frechet_inception_distance,
+    inception_score,
+    kernel_inception_distance,
+    metric_utils,
+    perceptual_path_length,
+    precision_recall,
+)
+
 
 # ----------------------------------------------------------------------------
 
@@ -111,7 +115,12 @@ def kid50k_full(opts):
 def pr50k3_full(opts):
     opts.dataset_kwargs.update(max_size=None, xflip=False)
     precision, recall = precision_recall.compute_pr(
-        opts, max_real=200000, num_gen=50000, nhood_size=3, row_batch_size=10000, col_batch_size=10000
+        opts,
+        max_real=200000,
+        num_gen=50000,
+        nhood_size=3,
+        row_batch_size=10000,
+        col_batch_size=10000,
     )
     return dict(pr50k3_full_precision=precision, pr50k3_full_recall=recall)
 
@@ -119,7 +128,13 @@ def pr50k3_full(opts):
 @register_metric
 def ppl2_wend(opts):
     ppl = perceptual_path_length.compute_ppl(
-        opts, num_samples=50000, epsilon=1e-4, space="w", sampling="end", crop=False, batch_size=2
+        opts,
+        num_samples=50000,
+        epsilon=1e-4,
+        space="w",
+        sampling="end",
+        crop=False,
+        batch_size=2,
     )
     return dict(ppl2_wend=ppl)
 
@@ -169,7 +184,12 @@ def kid50k(opts):
 def pr50k3(opts):
     opts.dataset_kwargs.update(max_size=None)
     precision, recall = precision_recall.compute_pr(
-        opts, max_real=50000, num_gen=50000, nhood_size=3, row_batch_size=10000, col_batch_size=10000
+        opts,
+        max_real=50000,
+        num_gen=50000,
+        nhood_size=3,
+        row_batch_size=10000,
+        col_batch_size=10000,
     )
     return dict(pr50k3_precision=precision, pr50k3_recall=recall)
 

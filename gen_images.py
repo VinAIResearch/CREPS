@@ -14,11 +14,11 @@ from typing import List, Optional, Tuple, Union
 
 import click
 import dnnlib
+import legacy
 import numpy as np
 import PIL.Image
 import torch
 
-import legacy
 
 # ----------------------------------------------------------------------------
 
@@ -79,9 +79,26 @@ def make_transform(translate: Tuple[float, float], angle: float):
 
 @click.command()
 @click.option("--network", "network_pkl", help="Network pickle filename", required=True)
-@click.option("--seeds", type=parse_range, help="List of random seeds (e.g., '0,1,4-6')", required=True)
-@click.option("--trunc", "truncation_psi", type=float, help="Truncation psi", default=1, show_default=True)
-@click.option("--class", "class_idx", type=int, help="Class label (unconditional if not specified)")
+@click.option(
+    "--seeds",
+    type=parse_range,
+    help="List of random seeds (e.g., '0,1,4-6')",
+    required=True,
+)
+@click.option(
+    "--trunc",
+    "truncation_psi",
+    type=float,
+    help="Truncation psi",
+    default=1,
+    show_default=True,
+)
+@click.option(
+    "--class",
+    "class_idx",
+    type=int,
+    help="Class label (unconditional if not specified)",
+)
 @click.option(
     "--noise-mode",
     help="Noise mode",
@@ -97,8 +114,21 @@ def make_transform(translate: Tuple[float, float], angle: float):
     show_default=True,
     metavar="VEC2",
 )
-@click.option("--rotate", help="Rotation angle in degrees", type=float, default=0, show_default=True, metavar="ANGLE")
-@click.option("--outdir", help="Where to save the output images", type=str, required=True, metavar="DIR")
+@click.option(
+    "--rotate",
+    help="Rotation angle in degrees",
+    type=float,
+    default=0,
+    show_default=True,
+    metavar="ANGLE",
+)
+@click.option(
+    "--outdir",
+    help="Where to save the output images",
+    type=str,
+    required=True,
+    metavar="DIR",
+)
 def generate_images(
     network_pkl: str,
     seeds: List[int],

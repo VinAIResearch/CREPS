@@ -11,7 +11,9 @@ GANs". Matches the original implementation by Salimans et al. at
 https://github.com/openai/improved-gan/blob/master/inception_score/model.py"""
 
 import numpy as np
+
 from . import metric_utils
+
 
 # ----------------------------------------------------------------------------
 
@@ -24,7 +26,11 @@ def compute_is(opts, num_gen, num_splits):
     )  # Match the original implementation by not applying bias in the softmax layer.
 
     gen_probs = metric_utils.compute_feature_stats_for_generator(
-        opts=opts, detector_url=detector_url, detector_kwargs=detector_kwargs, capture_all=True, max_items=num_gen
+        opts=opts,
+        detector_url=detector_url,
+        detector_kwargs=detector_kwargs,
+        capture_all=True,
+        max_items=num_gen,
     ).get_all()
 
     if opts.rank != 0:

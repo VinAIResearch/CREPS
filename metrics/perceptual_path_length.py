@@ -12,9 +12,12 @@ implementation by Karras et al. at
 https://github.com/NVlabs/stylegan/blob/master/metrics/perceptual_path_length.py"""
 
 import copy
+
 import numpy as np
 import torch
+
 from . import metric_utils
+
 
 # ----------------------------------------------------------------------------
 
@@ -80,9 +83,16 @@ class PPLSampler(torch.nn.Module):
         # Downsample to 256x256.
         factor = self.G.img_resolution // 256
         if factor > 1:
-            img = img.reshape([-1, img.shape[1], img.shape[2] // factor, factor, img.shape[3] // factor, factor]).mean(
-                [3, 5]
-            )
+            img = img.reshape(
+                [
+                    -1,
+                    img.shape[1],
+                    img.shape[2] // factor,
+                    factor,
+                    img.shape[3] // factor,
+                    factor,
+                ]
+            ).mean([3, 5])
 
         # Scale dynamic range from [-1,1] to [0,255].
         img = (img + 1) * (255 / 2)
@@ -106,7 +116,13 @@ def compute_ppl(opts, num_samples, epsilon, space, sampling, crop, batch_size):
 
     # Setup sampler and labels.
     sampler = PPLSampler(
-        G=opts.G, G_kwargs=opts.G_kwargs, epsilon=epsilon, space=space, sampling=sampling, crop=crop, vgg16=vgg16
+        G=opts.G,
+        G_kwargs=opts.G_kwargs,
+        epsilon=epsilon,
+        space=space,
+        sampling=sampling,
+        crop=crop,
+        vgg16=vgg16,
     )
     sampler.eval().requires_grad_(False).to(opts.device)
     c_iter = metric_utils.iterate_random_labels(opts=opts, batch_size=batch_size)
