@@ -26,6 +26,6 @@ The PyTorch package contains the required CUDA toolkit libraries needed to run P
 
 ## Things to try
 
-- Completely remove: `$HOME/.cache/torch_extensions` (Linux) or `C:\Users\<username>\AppData\Local\torch_extensions\torch_extensions\Cache` (Windows) and re-run StyleGAN3 python code.
+- Completely remove: `$HOME/.cache/torch_extensions` (Linux) or `C:\Users\<username>\AppData\Local\torch_extensions\torch_extensions\Cache` (Windows) and re-run CREPS python code.
 - Run ninja in `$HOME/.cache/torch_extensions` to see that it builds.
 - Inspect the `build.ninja` in the build directories under `$HOME/.cache/torch_extensions` and check CUDA tools and versions are consistent with what you intended to use.
