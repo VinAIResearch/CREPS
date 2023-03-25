@@ -25,7 +25,7 @@ Details of the model architecture and experimental results can be found in [our 
 ```bibtex
 @inproceedings{thuan2023creps,
   title={Efficient Scale-Invariant Generator with Column-Row Entangled Pixel Synthesis},
-  author=Thuan Hoang Nguyen, Thanh Van Le, Anh Tran},
+  author={Thuan Hoang Nguyen, Thanh Van Le, Anh Tran},
   year={2023},
   booktitle={IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
 }
