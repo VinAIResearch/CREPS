@@ -215,7 +215,7 @@ References:
 6. [Improved Techniques for Training GANs](https://arxiv.org/abs/1606.03498), Salimans et al. 2016
 
 ## Acknowledgments
-This repo is built upon [StyleGAN3](https://github.com/NVlabs/stylegan3) and we thank the authors for their great works and efforts to release source code. Furthermore, a special "thank you" to [CIPS](https://github.com/advimman/CIPS) and [AnyresGAN](https://github.com/chail/anyres-gan), which heavily inspires our work.
+This repo is built upon [StyleGAN3](https://github.com/NVlabs/stylegan3) and we thank the authors for their great works and efforts to release source code. Furthermore, a special "thank you" to [CIPS](https://github.com/advimman/CIPS) and [AnyresGAN](https://github.com/chail/anyres-gan), which heavily inspire our work.
 
 ## Contacts
 If you have any questions, please drop an email to _leejohnthuan@gmail.com_ or open an issue in this repository.
