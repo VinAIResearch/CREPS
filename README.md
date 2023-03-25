@@ -179,7 +179,7 @@ Additional quality metrics can also be computed after the training:
 
 ```.bash
 # Previous training run: look up options automatically, save result to JSONL file.
-python calc_metrics.py --metrics=eqt50k_int,eqr50k \
+python calc_metrics.py --metrics=fid50k_full \
     --network=~/training-runs/creps-r-mydataset/network-snapshot-000000.pkl
 
 # Pre-trained network pickle: specify dataset explicitly, print result to stdout.
@@ -187,7 +187,7 @@ python calc_metrics.py --metrics=fid50k_full --data=~/datasets/ffhq-1024x1024.zi
     --network=creps-ffhq-512x512.pkl
 ```
 
-The first example looks up the training configuration and performs the same operation as if `--metrics=eqt50k_int,eqr50k` had been specified during training. The second example downloads a pre-trained network pickle, in which case the values of `--data` and `--mirror` must be specified explicitly.
+The first example looks up the training configuration and performs the same operation as if `--metrics=fid50k_full` had been specified during training. The second example downloads a pre-trained network pickle, in which case the values of `--data` and `--mirror` must be specified explicitly.
 
 Note that the metrics can be quite expensive to compute (up to 1h), and many of them have an additional one-off cost for each new dataset (up to 30min). Also note that the evaluation is done using a different random seed each time, so the results will vary if the same metric is computed multiple times.
 
