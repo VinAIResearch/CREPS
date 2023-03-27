@@ -157,8 +157,8 @@ python dataset_tool.py --source=~/downloads/afhqv2/train/wild --dest=~/datasets/
 You can train new networks using `train.py`. For example:
 
 ```.bash
-# Train CREPS for AFHQv2 using 8 GPUs.
-python train.py --outdir=~/training-runs --cfg=creps --data=~/datasets/afhqv2-512x512.zip \
+# Train CREPS for FFHQ using 8 GPUs.
+python train.py --outdir=~/training-runs --cfg=creps --data=~/datasets/ffhq-512x512.zip \
     --gpus=8 --batch=32 --gamma=8.2 --mirror=1
 
 # Fine-tune CREPS for MetFaces using 1 GPU, starting from the pre-trained FFHQ pickle.
