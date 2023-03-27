@@ -92,7 +92,7 @@ The `docker run` invocation may look daunting, so let's unpack its contents here
 
 You can use pre-trained networks in your own Python code as follows:
 
-```.python
+```python
 with open('ffhq.pkl', 'rb') as f:
     G = pickle.load(f)['G_ema'].cuda()  # torch.nn.Module
 z = torch.randn([1, G.z_dim]).cuda()    # latent codes
@@ -106,7 +106,7 @@ The pickle contains three networks. `'G'` and `'D'` are instantaneous snapshots 
 
 The generator consists of two submodules, `G.mapping` and `G.synthesis`, that can be executed separately. They also support various additional options:
 
-```.python
+```python
 w = G.mapping(z, c, truncation_psi=0.5, truncation_cutoff=8)
 img = G.synthesis(w, noise_mode='const', force_fp32=True)
 ```
