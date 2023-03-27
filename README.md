@@ -9,7 +9,7 @@
 
 # Efficient Scale-Invariant Generator with Column-Row Entangled Pixel Synthesis
 <a href="#"><img src="https://img.shields.io/badge/WEBSITE-Visit%20project%20page-blue?style=for-the-badge"></a>
-<a href="https://arxiv.org/abs/"><img src="https://img.shields.io/badge/arxiv--red?style=for-the-badge"></a>
+<a href="https://arxiv.org/abs/"><img src="https://img.shields.io/badge/arxiv-2303.14157-red?style=for-the-badge"></a>
 
 [Thuan Hoang Nguyen](https://github.com/thuanz123),
 [Thanh Van Le](https://github.com/Luvata),
@@ -21,7 +21,7 @@ Any-scale image synthesis offers an efficient and scalable solution to synthesiz
 
 | ![teaser.png](./assets/teaser.png) |
 
-Details of the model architecture and experimental results can be found in [our following paper](https://arxiv.org/abs/).
+Details of the model architecture and experimental results can be found in [our following paper](https://arxiv.org/abs/2303.14157).
 ```bibtex
 @inproceedings{thuan2023creps,
   title={Efficient Scale-Invariant Generator with Column-Row Entangled Pixel Synthesis},
