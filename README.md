@@ -55,7 +55,7 @@ See [Troubleshooting](./assets/troubleshooting.md) for help on common installati
 Pre-trained networks are stored as `*.pkl` files that can be referenced using local filenames or URLs:
 
 ```.bash
-# Generate an image using pre-trained AFHQv2 model.
+# Generate an image using pre-trained FFHQ model.
 python gen_images.py --outdir=out --trunc=1 --seeds=2 \
     --network=creps-ffhq-512x512.pkl
 
