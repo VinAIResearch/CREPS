@@ -8,7 +8,7 @@
 7. [Contacts](#Contacts)
 
 # Efficient Scale-Invariant Generator with Column-Row Entangled Pixel Synthesis
-<a href="#"><img src="https://img.shields.io/badge/WEBSITE-Visit%20project%20page-blue?style=for-the-badge"></a>
+<a href="https://thuanz123.github.io/creps"><img src="https://img.shields.io/badge/WEBSITE-Visit%20project%20page-blue?style=for-the-badge"></a>
 <a href="https://arxiv.org/abs/2303.14157"><img src="https://img.shields.io/badge/arxiv-2303.14157-red?style=for-the-badge"></a>
 
 [Thuan Hoang Nguyen](https://github.com/thuanz123),
