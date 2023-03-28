@@ -19,7 +19,7 @@ VinAI Research, Vietnam
 > **Abstract:** 
 Any-scale image synthesis offers an efficient and scalable solution to synthesize photo-realistic images at any scale, even going beyond 2K resolution. However, existing GAN-based solutions depend excessively on convolutions and a hierarchical architecture, which introduce inconsistency and the "texture sticking" issue when scaling the output resolution. From another perspective, INR-based generators are scale-equivariant by design, but their huge memory footprint and slow inference hinder these networks from being adopted in large-scale or real-time systems. In this work, we propose **C**olumn-**R**ow **E**ntangled **P**ixel **S**ynthesis (**CREPS**), a new generative model that is both efficient and scale-equivariant without using any spatial convolutions or coarse-to-fine design. To save memory footprint and make the system scalable, we employ a novel bi-line representation that decomposes layer-wise feature maps into separate "thick" column and row encodings. Experiments on various datasets, including FFHQ, LSUN-Church, MetFaces, and Flickr-Scenery, confirm CREPS' ability to synthesize scale-consistent and alias-free images at any arbitrary resolution with proper training and inference speed.
 
-| ![teaser.png](./assets/teaser.png) |
+![teaser.png](./assets/teaser.png)
 
 Details of the model architecture and experimental results can be found in [our following paper](https://arxiv.org/abs/2303.14157).
 ```bibtex
