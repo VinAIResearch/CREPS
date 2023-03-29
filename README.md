@@ -34,8 +34,6 @@ Details of the model architecture and experimental results can be found in [our 
 
 ## Additional material
 
-- [Result videos](https://nvlabs-fi-cdn.nvidia.com/stylegan3/videos/)
-- [Curated example images](https://nvlabs-fi-cdn.nvidia.com/stylegan3/images/)
 - [CREPS pre-trained models](https://drive.google.com/drive/folders/19ntlAXD7MwYqN7OPVuBcZgaC_yFCwpk7?usp=share_link)
 - [StyleGAN3 pre-trained models](https://ngc.nvidia.com/catalog/models/nvidia:research:stylegan3) compatible with this codebase
   > <sub>Access individual networks via `https://api.ngc.nvidia.com/v2/models/nvidia/research/stylegan3/versions/1/files/<MODEL>`, where `<MODEL>` is one of:</sub><br>
