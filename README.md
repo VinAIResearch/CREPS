@@ -32,6 +32,29 @@ Details of the model architecture and experimental results can be found in [our 
 ```
 **Please CITE** our paper whenever our model implementation is used to help produce published results or incorporated into other software.
 
+## Additional material
+
+- [Result videos](https://nvlabs-fi-cdn.nvidia.com/stylegan3/videos/)
+- [Curated example images](https://nvlabs-fi-cdn.nvidia.com/stylegan3/images/)
+- [CREPS pre-trained models](https://drive.google.com/drive/folders/19ntlAXD7MwYqN7OPVuBcZgaC_yFCwpk7?usp=share_link)
+- [StyleGAN3 pre-trained models](https://ngc.nvidia.com/catalog/models/nvidia:research:stylegan3) compatible with this codebase
+  > <sub>Access individual networks via `https://api.ngc.nvidia.com/v2/models/nvidia/research/stylegan3/versions/1/files/<MODEL>`, where `<MODEL>` is one of:</sub><br>
+  > <sub>`stylegan3-t-ffhq-1024x1024.pkl`, `stylegan3-t-ffhqu-1024x1024.pkl`, `stylegan3-t-ffhqu-256x256.pkl`</sub><br>
+  > <sub>`stylegan3-r-ffhq-1024x1024.pkl`, `stylegan3-r-ffhqu-1024x1024.pkl`, `stylegan3-r-ffhqu-256x256.pkl`</sub><br>
+  > <sub>`stylegan3-t-metfaces-1024x1024.pkl`, `stylegan3-t-metfacesu-1024x1024.pkl`</sub><br>
+  > <sub>`stylegan3-r-metfaces-1024x1024.pkl`, `stylegan3-r-metfacesu-1024x1024.pkl`</sub><br>
+  > <sub>`stylegan3-t-afhqv2-512x512.pkl`</sub><br>
+  > <sub>`stylegan3-r-afhqv2-512x512.pkl`</sub><br>
+- [StyleGAN2 pre-trained models](https://ngc.nvidia.com/catalog/models/nvidia:research:stylegan2) compatible with this codebase
+  > <sub>Access individual networks via `https://api.ngc.nvidia.com/v2/models/nvidia/research/stylegan2/versions/1/files/<MODEL>`, where `<MODEL>` is one of:</sub><br>
+  > <sub>`stylegan2-ffhq-1024x1024.pkl`, `stylegan2-ffhq-512x512.pkl`, `stylegan2-ffhq-256x256.pkl`</sub><br>
+  > <sub>`stylegan2-ffhqu-1024x1024.pkl`, `stylegan2-ffhqu-256x256.pkl`</sub><br>
+  > <sub>`stylegan2-metfaces-1024x1024.pkl`, `stylegan2-metfacesu-1024x1024.pkl`</sub><br>
+  > <sub>`stylegan2-afhqv2-512x512.pkl`</sub><br>
+  > <sub>`stylegan2-afhqcat-512x512.pkl`, `stylegan2-afhqdog-512x512.pkl`, `stylegan2-afhqwild-512x512.pkl`</sub><br>
+  > <sub>`stylegan2-brecahad-512x512.pkl`, `stylegan2-cifar10-32x32.pkl`</sub><br>
+  > <sub>`stylegan2-celebahq-256x256.pkl`, `stylegan2-lsundog-256x256.pkl`</sub><br>
+
 ## Requirements
 
 * Linux and Windows are supported, but we recommend Linux for performance and compatibility reasons.
