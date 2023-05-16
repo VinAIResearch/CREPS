@@ -205,7 +205,7 @@ def generate_images(
             
         # Construct an input coordinates and pass to the creps generator.
         if hasattr(G.synthesis.b4, "input"):
-            G.synthesis.input.coords = make_coords(G.img_resolution, scale).to(device)
+            G.synthesis.b4.input.coords = make_coords(G.img_resolution, scale).to(device)
 
         img = G(z, label, truncation_psi=truncation_psi, noise_mode=noise_mode)
         img = (img.permute(0, 2, 3, 1) * 127.5 + 128).clamp(0, 255).to(torch.uint8)
