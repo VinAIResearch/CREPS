@@ -77,6 +77,16 @@ def make_transform(translate: Tuple[float, float], angle: float):
 # ----------------------------------------------------------------------------
 
 
+def make_coords(resolution: float, scale: float):
+    coords = torch.linspace(0, 1, resolution * scale)
+    coords = coords.reshape(1, -1, 1, 1)
+    coords = coords.repeat(1, 1, 2, 1)
+    return coords
+
+
+# ----------------------------------------------------------------------------
+
+
 @click.command()
 @click.option("--network", "network_pkl", help="Network pickle filename", required=True)
 @click.option(
@@ -123,6 +133,14 @@ def make_transform(translate: Tuple[float, float], angle: float):
     metavar="ANGLE",
 )
 @click.option(
+    "--scale",
+    help="Scale of output image",
+    type=float,
+    default=1,
+    show_default=True,
+    metavar="ANGLE",
+)
+@click.option(
     "--outdir",
     help="Where to save the output images",
     type=str,
@@ -137,6 +155,7 @@ def generate_images(
     outdir: str,
     translate: Tuple[float, float],
     rotate: float,
+    scale: float,
     class_idx: Optional[int],
 ):
     """Generate images using pretrained network pickle.
@@ -176,13 +195,17 @@ def generate_images(
         print("Generating image for seed %d (%d/%d) ..." % (seed, seed_idx, len(seeds)))
         z = torch.from_numpy(np.random.RandomState(seed).randn(1, G.z_dim)).to(device)
 
-        # Construct an inverse rotation/translation matrix and pass to the generator.  The
+        # Construct an inverse rotation/translation matrix and pass to the stylegan3 generator.  The
         # generator expects this matrix as an inverse to avoid potentially failing numerical
         # operations in the network.
         if hasattr(G.synthesis, "input"):
             m = make_transform(translate, rotate)
             m = np.linalg.inv(m)
             G.synthesis.input.transform.copy_(torch.from_numpy(m))
+            
+        # Construct an input coordinates and pass to the creps generator.
+        if hasattr(G.synthesis.b4, "input"):
+            G.synthesis.input.coords = make_coords(G.img_resolution, scale).to(device)
 
         img = G(z, label, truncation_psi=truncation_psi, noise_mode=noise_mode)
         img = (img.permute(0, 2, 3, 1) * 127.5 + 128).clamp(0, 255).to(torch.uint8)
