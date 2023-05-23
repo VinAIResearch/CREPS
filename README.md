@@ -11,7 +11,7 @@
 <a href="https://thuanz123.github.io/creps"><img src="https://img.shields.io/badge/WEBSITE-Visit%20project%20page-blue?style=for-the-badge"></a>
 <a href="https://arxiv.org/abs/2303.14157"><img src="https://img.shields.io/badge/arxiv-2303.14157-red?style=for-the-badge"></a>
 
-[Thuan Hoang Nguyen](https://github.com/thuanz123),
+[Thuan Hoang Nguyen](https://thuanz123.github.io/),
 [Thanh Van Le](https://github.com/Luvata),
 [Anh Tran](https://sites.google.com/site/anhttranusc/)<br>
 VinAI Research, Vietnam
