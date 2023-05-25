@@ -78,7 +78,7 @@ def make_transform(translate: Tuple[float, float], angle: float):
 
 
 def make_coords(resolution: float, scale: float):
-    coords = torch.linspace(0, 1, resolution * scale)
+    coords = torch.linspace(0, 1, int(resolution * scale))
     coords = coords.reshape(1, -1, 1, 1)
     coords = coords.repeat(1, 1, 2, 1)
     return coords
