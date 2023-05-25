@@ -134,11 +134,10 @@ def make_coords(resolution: float, scale: float):
 )
 @click.option(
     "--scale",
-    help="Scale of output image",
+    help="Scale of output images",
     type=float,
     default=1,
     show_default=True,
-    metavar="ANGLE",
 )
 @click.option(
     "--outdir",
