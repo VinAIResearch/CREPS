@@ -78,7 +78,7 @@ Pre-trained networks are stored as `*.pkl` files that can be referenced using lo
 ```.bash
 # Generate an image using pre-trained FFHQ model.
 python gen_images.py --outdir=out --trunc=1 --seeds=2 \
-    --network=creps-ffhq-512x512.pkl
+    --network=creps-ffhq-512x512.pkl --scale=2
 
 # Render a 4x2 grid of interpolations for seeds 0 through 31.
 python gen_video.py --output=lerp.mp4 --trunc=1 --seeds=0-31 --grid=4x2 \
@@ -201,11 +201,11 @@ Additional quality metrics can also be computed after the training:
 ```.bash
 # Previous training run: look up options automatically, save result to JSONL file.
 python calc_metrics.py --metrics=fid50k_full \
-    --network=~/training-runs/creps-r-mydataset/network-snapshot-000000.pkl
+    --network=~/training-runs/creps-mydataset/network-snapshot-000000.pkl
 
 # Pre-trained network pickle: specify dataset explicitly, print result to stdout.
 python calc_metrics.py --metrics=fid50k_full --data=~/datasets/ffhq-1024x1024.zip --mirror=1 \
-    --network=creps-ffhq-512x512.pkl
+    --network=creps-ffhq-512x512.pkl --scale=2
 ```
 
 The first example looks up the training configuration and performs the same operation as if `--metrics=fid50k_full` had been specified during training. The second example downloads a pre-trained network pickle, in which case the values of `--data` and `--mirror` must be specified explicitly.
