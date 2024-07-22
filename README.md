@@ -13,7 +13,7 @@
 
 [Thuan Hoang Nguyen](https://thuanz123.github.io/),
 [Thanh Van Le](https://github.com/Luvata),
-[Anh Tran](https://sites.google.com/site/anhttranusc/)<br>
+[Anh Tran](https://scholar.google.com/citations?user=FYZ5ODQAAAAJ)<br>
 VinAI Research, Vietnam
 
 > **Abstract:** 
