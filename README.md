@@ -239,4 +239,4 @@ References:
 This repo is built upon [StyleGAN3](https://github.com/NVlabs/stylegan3) and we thank the authors for their great works and efforts to release source code. Furthermore, a special "thank you" to [CIPS](https://github.com/advimman/CIPS) and [AnyresGAN](https://github.com/chail/anyres-gan), which heavily inspire our work.
 
 ## Contacts
-If you have any questions, please drop an email to v.thuannh5@vinai.io_ or open an issue in this repository.
+If you have any questions, please drop an email to _v.thuannh5@vinai.io_ or open an issue in this repository.
