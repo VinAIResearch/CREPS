@@ -1,4 +1,4 @@
-@inproceedings{thuan2023creps,
+@inproceedings{nguyen2023creps,
   title={Efficient Scale-Invariant Generator with Column-Row Entangled Pixel Synthesis},
   author={Thuan Hoang Nguyen, Thanh Van Le, Anh Tran},
   year={2023},
