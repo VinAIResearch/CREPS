@@ -12,7 +12,7 @@
 <a href="https://arxiv.org/abs/2303.14157"><img src="https://img.shields.io/badge/arxiv-2303.14157-red?style=for-the-badge"></a>
 
 [Thuan Hoang Nguyen](https://thuanz123.github.io/),
-[Thanh Van Le](https://github.com/Luvata),
+[Thanh Van Le](https://luvata.github.io/),
 [Anh Tran](https://scholar.google.com/citations?user=FYZ5ODQAAAAJ)<br>
 VinAI Research, Vietnam
 
